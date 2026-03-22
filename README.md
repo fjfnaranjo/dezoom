@@ -31,43 +31,48 @@ Reference of the internal data structure:
 
 ```c
 enum wlzoomshape {
-    WLZ_SQUARE,
-    WLZ_CIRCLE,
+  WLZ_SQUARE,
+  WLZ_CIRCLE,
 };
 
+enum wlzoomarea {
+  unsigned float scale = 1.5;
+  wlzoomshape shape = WLZ_SQUARE;
+  float x = 0.0; // original square top-left position
+  float y = 0.0;
+  float w = 0.0; // original square size
+  float h = 0.0;
+  float dx = 0.0; // destination square top-left position
+  float dy = 0.0;
+};
+
+// WLZ_CIRCLE
+// x, y    original circle center position from screen top-left
+// h, w    radius in pixels, as total% ex. 270 pixels for 1080p
+// dx, dy  destination circle center position from screen top-left
+
 struct wlzoom {
-    float pan_scale = 1.0;
-    // distance between original and zoomed top-left corners
-    float pan_x = 0.0; 
-    float pan_y = 0.0;
+  float pan_scale = 1.0;
+  float pan_x = 0.0; // zoomed view top-left corner position
+  float pan_y = 0.0;
 
-    bool scope_enabled = false;
-    bool scope_stuck = false;
-    unsigned float scope_scale = 1.5;
-    wlzoomshape scope_shape = WLZ_CIRCLE;
-    float scope_x = 0.0; // from screen TL corner to circle center
-    float scope_y = 0.0;
-    float scope_size_x = 0.25; // pixels for radius, as total%
-    float scope_size_y = 0.25; // ex. 270 pixel radius for 1080p
+  bool scope_enabled = false;
+  bool scope_stuck = false;
+  wlzoomarea scope_area;
 
-    wlzoomregion *regions;
+  wlzoomregion *regions;
 };
 
 enum wlzoomexpand {
-    WLZ_NONE,
-    WLZ_INNER,
-    WLZ_OUTER,
+  WLZ_NONE,
+  WLZ_ORIGIN,
+  WLZ_DEST,
 };
 
 struct wlzoomregion {
-    bool region_enabled = false;
-    wlzoomexpand region_expand = WLZ_INNER;
-    unsigned float region_scale = 1.5;
-    wlzoomshape region_shape = WLZ_SQUARE;
-    float region_x = 0.0; // from screen to square TL corners
-    float region_y = 0.0;
-    float region_size_x = 0.25; // pixels for side, as total%
-    float region_size_y = 0.25; // ex. 270 pixel side for 1080p
+  bool enabled = false;
+  wlzoomexpand expand = WLZ_ORIGIN;
+  wlzoomarea area;
 }
 ```
 
