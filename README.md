@@ -16,7 +16,7 @@ it and following the cursor.
 by taking the space around them.
 
 Scope zoom can be made "sticky" to fix its position, allowing cursor
-movement without moving the scoped region.
+movement without moving the scoped area.
 
 Regions can be expanded automatically when the cursor enters the
 original or zoomed area.
