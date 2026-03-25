@@ -1,30 +1,29 @@
-# wlzoom
+# dezoom
 
-**wlzoom** aims to make desktop zoom generally available in Wayland
-compositors and desktop environments.
+**dezoom** aims to make desktop zoom generally available in X11, Wayland
+and desktop environments in general.
 
 Zoom is an important accessibility tool for central vision loss and
 other vision impairment conditions.
 
-The set of tools described by **wlzoom** tries to cover different use
+The set of tools described by **dezoom** tries to cover different use
 cases by being comprehensive and configurable, balancing simplicity
 when it is achievable without compromising accessibility requirements.
 
 ## Project scope
 
-**wlzoom** focus on the next general areas of interest.
+**dezoom** focus on the next general areas of interest.
 
 - Feature set definition: trying to cover accessibility use cases as
 completely as reasonably possible.
-- Reference implementations: providing code for the feature set in a way
-that facilitates adoption by compositor and DE developers.
 - Configuration and control protocols: providing integration with
-accessibility minded applications and drivers observing the Wayland
-security design environment.
+accessibility minded applications and hardware.
+- Reference implementations: providing code for the feature set in a way
+that facilitates adoption by developers.
 
-## Feature set definition
+## Feature set
 
-**wlzoom** defines three kinds of zoom. Note that for multiple displays,
+**dezoom** defines three kinds of zoom. Note that for multiple displays,
 each display its considered independent.
 
 * Panoramic zoom: zooms-in the entire display and allows panning across
@@ -46,37 +45,37 @@ original or their zoomed area, and disabled when it leaves one of them.
 ¹ Control methods that involve following the cursor have the option to
 stop following on demand.
 
-## Wayland control protocol
+## Control protocols
 
 Waiting for reference implementations and user reports to validate data
-model. Some details are already established:
+model before designing the protocols.
 
-* Pixel sizes are defined as floats. Values between 0 and 1 are treated
-as a percentage of the display were the zoom is defined.
+Some details already established:
 
-* Regions can be identified using a string.
+* Different regions are identified using a string.
+
+* The protocol supports configuring the positions and scale factors
+using values relative to the total display size.
 
 ## Reference implementations
 
-### labwc
-
-#### Data model
+### Data model
 
 ```c
-enum wlpanmode {
-  WLZ_CURSOR,
-  WLZ_ABSOLUTE,
-  WLZ_EDGE,
+enum dezoompanmode {
+  DEZOOM_CURSOR,
+  DEZOOM_ABSOLUTE,
+  DEZOOM_EDGE,
 };
 
-enum wlzoomshape {
-  WLZ_RECTANGLE,
-  WLZ_ELLIPSE,
+enum dezoomshape {
+  DEZOOM_RECTANGLE,
+  DEZOOM_ELLIPSE,
 };
 
-struct wlzoomarea {
+struct dezoomarea {
   unsigned float scale = 1.5;
-  wlzoomshape shape = WLZ_RECTANGLE;
+  dezoomshape shape = DEZOOM_RECTANGLE;
   float x = 0.0; // original rectangle top-left position
   float y = 0.0;
   float w = 0.0; // original rectangle size
@@ -85,46 +84,36 @@ struct wlzoomarea {
   float dy = 0.0;
 };
 
-// WLZ_ELLIPSE
+// DEZOOM_ELLIPSE
 // x, y    original ellipse center position from display top-left
 // h, w    radius in pixels, as total% ex. 270 pixels for 1080p
 // dx, dy  destination ellipse center position from display top-left
 
-enum wlzoomexpand {
-  WLZ_NONE,
-  WLZ_ORIGIN,
-  WLZ_DEST,
-  WLZ_ORIGIN_DEST, // enable on origin and keep until dest is left
+enum dezoomexpand {
+  DEZOOM_NONE,
+  DEZOOM_ORIGIN,
+  DEZOOM_DEST,
+  DEZOOM_ORIGIN_DEST, // enable on origin and keep until dest is left
 };
 
-struct wlzoomregion {
+struct dezoomregion {
   char *id;
-  wlzoomexpand expand = WLZ_ORIGIN;
-  wlzoomarea area;
+  dezoomexpand expand = DEZOOM_ORIGIN;
+  dezoomarea area;
 };
 
-struct wlzoom {
+struct dezoom {
   float pan_scale = 1.0;
-  wlpanmode pan_mode = WLZ_EDGE;
+  dezoompanmode pan_mode = DEZOOM_EDGE;
   float pan_x = 0.0; // zoomed view top-left corner position
   float pan_y = 0.0;
 
   bool scope_fixed = false;
-  wlzoomarea scope_area;
+  dezoomarea scope_area;
 
-  wlzoomregion *regions;
+  dezoomregion *regions;
 };
 ```
-#### Proposed implementation path
-
-- Data model:
-  - Add data model.
-  - Persist xml configuration in new data model on boot.
-  - Replace existing data model for the current magnifier.
-- Expand xml configuration to allow region configuration.
-- Add regional zoom support.
-- Add actions to modify the state.
-
 #### Shadertoy shape data example
 
 Because code is better than words...
@@ -195,6 +184,35 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
   }
 }
 ```
+
+### labwc
+
+Lightweight Wayland compositor ideal for experimentation.
+
+### Proposed implementation path
+
+- Data model:
+  - Add data model.
+  - Persist xml configuration in new data model on boot.
+  - Replace existing data model for the current magnifier.
+- Expand xml configuration to allow region configuration.
+- Add regional zoom support.
+- Add actions to modify the state.
+- Test the implementation of a Wayland control protocol.
+
+### picom
+
+X11 compositor with support for shaders.
+
+### Proposed implementation path
+
+- Data model:
+  - Add data model.
+  - Persist configuration in new data model on boot.
+- Expand configuration to allow region configuration.
+- Build a shader to apply the zooms.
+- Validate performance and coverage implications.
+- Test the implementation of a D-BUS control protocol.
 
 ## Origins and acknowledgments
 
