@@ -41,6 +41,8 @@ it and following the cursor¹.
 space around them. They can be enabled independently. They can also be
 enabled by checking if the cursor position collides with either their
 original or their zoomed area, and disabled when it leaves one of them.
+Finally, they can be set as ephemeral, to self-destroy on the next event
+that disables them.
 
 ¹ Control methods that involve following the cursor have the option to
 stop following on demand.
@@ -70,12 +72,12 @@ using values relative to the total display size.
 
 ### Focus zoom case
 
-A special region, the "focus region", can be used by applications and UI
+A special region, the "focus" region, can be used by applications and UI
 toolkit libraries to zoom over widgets and other UI elements when they
 have the interface focus or the user moves the cursor over them. This is
 just a proposed name for the concept, the actual implementation will
-use a regular region, but the protocol will have into consideration this
-use case.
+use a regular ephemeral region, but the protocol will have into
+consideration this use case.
 
 ## Reference implementations
 
@@ -111,6 +113,7 @@ struct dezoomarea {
 
 enum dezoomexpand {
   DEZOOM_NONE,
+  DEZOOM_CREATION,
   DEZOOM_ORIGIN,
   DEZOOM_DEST,
   DEZOOM_ORIGIN_DEST, // enable on origin and keep until dest is left
@@ -118,6 +121,8 @@ enum dezoomexpand {
 
 struct dezoomregion {
   char *id;
+  bool enabled = false;
+  bool ephemeral = false;
   dezoomexpand expand = DEZOOM_ORIGIN;
   dezoomarea area;
 };
