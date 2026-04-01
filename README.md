@@ -154,11 +154,11 @@ struct dezoom {
   dezoomregion *regions;
 };
 ```
-#### Shadertoy shape data example
+#### Shadertoy examples
 
 Because code is better than words...
 
-##### Rectangle
+##### Rectangle shape
 
 Note: In Shadertoy, (0,0) is bottom left.
 
@@ -191,7 +191,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
 }
 ```
 
-##### Ellipse
+##### Ellipse shape
 
 ```
 void mainImage(out vec4 fragColor, in vec2 fragCoord)
@@ -222,6 +222,34 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord)
   } else {
     fragColor = texture(iChannel0, uv);
   }
+}
+```
+
+##### Region content overflow
+
+```
+void mainImage(out vec4 fragColor, in vec2 fragCoord)
+{
+    vec2 uv = fragCoord / iResolution.xy;
+    float mouseX = iMouse.x / iResolution.x;
+
+    float zoomAreaHeight = 0.20;
+    float sourceHeight   = 0.10;
+    float zoomFactor     = 2.0;
+
+    vec2 sampleUV = uv;
+
+    if (uv.y > 1.0 - zoomAreaHeight)
+    {
+        float localY = (uv.y - (1.0 - zoomAreaHeight)) / zoomAreaHeight;
+        float srcY = localY * (sourceHeight / zoomFactor);
+        float visibleWidth = 1.0 / zoomFactor;
+        float panX = mouseX * (1.0 - visibleWidth);
+        float srcX = panX + uv.x * visibleWidth;
+        sampleUV = vec2(srcX, 1.0 - srcY);
+    }
+
+    fragColor = texture(iChannel0, sampleUV);
 }
 ```
 
