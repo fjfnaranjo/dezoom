@@ -79,6 +79,13 @@ just a proposed name for the concept, the actual implementation will
 use a regular ephemeral region, but the protocol will have into
 consideration this use case.
 
+### Protocol independent behaviors
+
+Some implementations can add additional behaviors to **dezoom**, like
+adapting cursor dynamics (speed, acceleration...) to the zoom
+definitions. The protocol will allow for a simple way to control them,
+but will not be strict about their definitions.
+
 ## Reference implementations
 
 ### Data model
