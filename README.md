@@ -90,7 +90,8 @@ consideration this use case.
 Some implementations can add additional behaviors to **dezoom**, like
 adapting cursor dynamics (speed, acceleration...) to the zoom
 definitions. The protocol will allow for a simple way to control them,
-but will not be strict about their definitions.
+but will not be strict about their definitions. Another example is
+adjusting the position of the cursor when entering or leaving a region.
 
 ## Reference implementations
 
