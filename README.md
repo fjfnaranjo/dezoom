@@ -85,6 +85,16 @@ just a proposed name for the concept, the actual implementation will
 use a regular ephemeral region, but the protocol will have into
 consideration this use case.
 
+### Screen zoom case
+
+Using an entire screen as the area showing the zoomed content is under
+consideration. This behavior is covered in the basic feature set by
+moving the cursor to the secondary screen, stop following it and then
+moving back to the primary output. But if the feature shows potential
+usage, a control command can be implemented to set the entire secondary
+screen area easily. Also, a configuration could fix the screen zoom as a
+permanent option.
+
 ### Protocol independent behaviors
 
 Some implementations can add additional behaviors to **dezoom**, like
